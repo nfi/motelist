@@ -34,7 +34,7 @@ tmp_file = '/tmp/get_ports_osx.xml'
 
 port_patterns = [
     '/dev/tty.SLAB*',
-    '/dev/tty.usbmodem*',
+    '/dev/tty.usbmodem*1',
 ]
 
 
