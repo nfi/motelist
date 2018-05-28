@@ -37,7 +37,7 @@ class Detector(object):
 
         platform = sys.platform
 
-        for k, v in platforms.iteritems():
+        for k, v in platforms.items():
             if platform.startswith(k):
                 return importlib.import_module(v)
 
