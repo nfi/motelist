@@ -24,7 +24,24 @@
 #
 
 import os, sys, threading, time, serial
-from get_ports_linux import comports  # @UnusedImport
+import importlib
+
+
+class Detector(object):
+    @staticmethod
+    def factory():
+        platforms = {
+            'linux': 'get_ports_linux',
+            'darwin': 'get_ports_osx',
+        }
+
+        platform = sys.platform
+
+        for k, v in platforms.iteritems():
+            if platform.startswith(k):
+                return importlib.import_module(v)
+
+        return None
 
 # Unified way of accessing motes
 class Mote(object):
@@ -296,7 +313,13 @@ class Motelist(object):
     @staticmethod
     def __activateCallbacks(force = False):
         # If no new motes added, no need to call callbacks
-        if not Motelist.recreateMoteList(comports()) and not force:
+        try:
+            detector = Detector.factory()
+        except AttributeError:
+            print("OS not supported")
+            raise
+
+        if not Motelist.recreateMoteList(detector.comports()) and not force:
             return
 
         Motelist.lock.acquire()
