@@ -90,8 +90,8 @@ class Device(object):
 
 
 def node_text_cmp(node, text_iter):
-    """Inspects the text inside a <string> node. Returns the TEXT_NODE if the
-    text appears inside text_iter. None otherwise"""
+    """Inspects the text inside a node. Returns the text itself if it appears
+    inside text_iter. None otherwise"""
     try:
         if node.firstChild.nodeType == dom.Node.TEXT_NODE:
             s = node.firstChild.data
