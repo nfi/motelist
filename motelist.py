@@ -36,15 +36,15 @@ import argparse
 
 class Motelist(object):
     defaults = {
-        'print_header': True,
+        'omit_header': False,
         'csv_out': False,
         'brief': False,
     }
 
-    def __init__(self, print_header=defaults['print_header'],
+    def __init__(self, omit_header=defaults['omit_header'],
                  csv_out=defaults['csv_out'],
                  brief=defaults['brief']):
-        self.print_header = print_header
+        self.omit_header = omit_header
         self.csv_out = csv_out
         self.brief = brief
         self.motes = ['123']
@@ -410,9 +410,9 @@ def arg_parse():
     parser.add_argument('-c', '--csv', action='store_true',
                            default=False,
                            help = 'Print list in CSV format')
-    parser.add_argument('-p', '--print_header', action='store_true',
-                           default=True,
-                           help='Print header row')
+    parser.add_argument('-o', '--omit_header', action='store_true',
+                           default=False,
+                           help='Omit header row')
     parser.add_argument('-b', '--brief', action='store_true',
                            default=False,
                            help='Only print serial port paths')
@@ -424,4 +424,4 @@ def arg_parse():
 
 if __name__ == '__main__':
     args = arg_parse()
-    print(str(Motelist(print_header=args.print_header, csv_out=args.csv ,brief=args.brief)))
+    print(str(Motelist(omit_header=args.omit_header, csv_out=args.csv ,brief=args.brief)))
