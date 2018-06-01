@@ -421,17 +421,6 @@ class MotelistOld(object):
     def printMotelist():
         print(Motelist.getClassicFormatMotelist())
 
-def main():
-    for arg in sys.argv[1:]:
-        if arg == "-c":
-            for x in Motelist.getMotelist(True):
-                print (x.getCSVData())
-            sys.exit(1)
-        elif arg == "-h":
-            print ("Use motelist.py -c for CSV data.")
-            sys.exit(1)
-    
-    Motelist.printMotelist()
 
 def arg_parse():
     parser = argparse.ArgumentParser(add_help=False,
@@ -454,14 +443,5 @@ def arg_parse():
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except SystemExit:
-        raise               #let pass exit() calls
-    except KeyboardInterrupt:
-        if DEBUG: raise     #show full trace in debug mode
-        sys.stderr.write("user abort.\n")   #short messy in user mode
-        sys.exit(1)
-    #except Exception as msg:
-    #    sys.stderr.write("\nAn error occured:\n%s\n" % msg)
-    #    sys.exit(1)
+    args = arg_parse()
+    print(str(Motelist(print_header=args.print_header, csv_out=args.csv ,brief=args.brief)))
