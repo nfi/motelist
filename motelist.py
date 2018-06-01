@@ -44,18 +44,19 @@ class Motelist(object):
     def __init__(self, omit_header=defaults['omit_header'],
                  csv_out=defaults['csv_out'],
                  brief=defaults['brief']):
-        self.omit_header = omit_header
-        self.csv_out = csv_out
-        self.brief = brief
-        self.motes = ['123']
-        self.backend = backends.backend.Backend.detect()
+        self.__omit_header = omit_header
+        self.__csv_out = csv_out
+        self.__brief = brief
+        self.__motes = ['123']
+        self.__backend = backends.backend.Backend.detect()
+
         try:
-            self.backend.run()
+            self.__motes.extend(self.__backend.run())
         except AttributeError:
             pass
 
     def __str__(self):
-        return '\n'.join(str(mote) for mote in self.motes)
+        return '\n'.join(str(mote) for mote in self.__motes)
 
 
 # Unified way of accessing motes
