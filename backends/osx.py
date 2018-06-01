@@ -26,9 +26,14 @@
 # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Authors:
+#   George Oikonomou
 import glob
 import subprocess
 import xml.dom.minidom as dom
+import backends.backend
+
 
 tmp_file = '/tmp/get_ports_osx.xml'
 
@@ -38,15 +43,8 @@ port_patterns = [
 ]
 
 
-class Backend(object):
+class Backend(backends.backend.Backend):
     os = 'darwin'
-
-    @classmethod
-    def visit(cls, platform):
-        if platform.startswith(cls.os):
-            return cls
-
-        return None
 
 
 class Device(object):

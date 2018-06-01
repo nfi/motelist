@@ -30,7 +30,7 @@
 #   Atis Elsts
 #   George Oikonomou
 import os, sys, threading, time, serial
-import importlib
+import backends.backend
 import argparse
 
 
@@ -48,31 +48,11 @@ class Motelist(object):
         self.csv_out = csv_out
         self.brief = brief
         self.motes = ['123']
-        self.backend = self.detect_backend()
+        self.backend = backends.backend.Backend.detect()
         try:
             self.backend.run()
         except AttributeError:
             pass
-
-    def detect_backend(self):
-        backends = (
-            'linux',
-            'osx',
-        )
-        backends_dir = 'backends'
-
-        platform = sys.platform
-        print(platform)
-
-        for backend in backends:
-            be = importlib.import_module('.'.join((backends_dir, backend)))
-
-            if be.Backend.visit(platform):
-                self.backend = be
-                return be
-
-        print('OS not supported')
-        return None
 
     def __str__(self):
         return '\n'.join(str(mote) for mote in self.motes)

@@ -30,16 +30,11 @@
 import os
 import glob
 import re
+import backends.backend
 
-class Backend(object):
+
+class Backend(backends.backend.Backend):
     os = 'linux'
-
-    @classmethod
-    def visit(cls, platform):
-        if platform.startswith(Backend.os):
-            return cls
-
-        return None
 
 
 printVID = False
