@@ -31,6 +31,7 @@
 #   George Oikonomou
 import os, sys, threading, time, serial
 import importlib
+import argparse
 
 
 class Detector(object):
@@ -403,6 +404,25 @@ def main():
             sys.exit(1)
     
     Motelist.printMotelist()
+
+def arg_parse():
+    parser = argparse.ArgumentParser(add_help=False,
+                                     description='Automatically detect and '
+                                                 'print out a list of motes '
+                                                 'connected to this computer')
+    parser.add_argument('-c', '--csv', action='store_true',
+                           default=False,
+                           help = 'Print list in CSV format')
+    parser.add_argument('-p', '--print_header', action='store_true',
+                           default=True,
+                           help='Print header row')
+    parser.add_argument('-b', '--brief', action='store_true',
+                           default=False,
+                           help='Only print serial port paths')
+    parser.add_argument('-h', '--help', action='help',
+                           help='Show this message and exit')
+
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
