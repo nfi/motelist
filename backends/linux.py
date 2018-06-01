@@ -31,6 +31,17 @@ import os
 import glob
 import re
 
+class Backend(object):
+    os = 'linux'
+
+    @classmethod
+    def visit(cls, platform):
+        if platform.startswith(Backend.os):
+            return cls
+
+        return None
+
+
 printVID = False
 
 def read_line(filename):

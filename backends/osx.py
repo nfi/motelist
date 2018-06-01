@@ -38,6 +38,17 @@ port_patterns = [
 ]
 
 
+class Backend(object):
+    os = 'darwin'
+
+    @classmethod
+    def visit(cls, platform):
+        if platform.startswith(cls.os):
+            return cls
+
+        return None
+
+
 class Device(object):
     search_attrs = {
         'idVendor': 'vid',
