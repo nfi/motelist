@@ -34,21 +34,49 @@ import importlib
 import argparse
 
 
-class Detector(object):
-    @staticmethod
-    def factory():
-        platforms = {
-            'linux': 'get_ports_linux',
-            'darwin': 'get_ports_osx',
-        }
+class Motelist(object):
+    defaults = {
+        'print_header': True,
+        'csv_out': False,
+        'brief': False,
+    }
+
+    def __init__(self, print_header=defaults['print_header'],
+                 csv_out=defaults['csv_out'],
+                 brief=defaults['brief']):
+        self.print_header = print_header
+        self.csv_out = csv_out
+        self.brief = brief
+        self.motes = ['123']
+        self.backend = self.detect_backend()
+        try:
+            self.backend.run()
+        except AttributeError:
+            pass
+
+    def detect_backend(self):
+        backends = (
+            'linux',
+            'osx',
+        )
+        backends_dir = 'backends'
 
         platform = sys.platform
+        print(platform)
 
-        for k, v in platforms.items():
-            if platform.startswith(k):
-                return importlib.import_module(v)
+        for backend in backends:
+            be = importlib.import_module('.'.join((backends_dir, backend)))
 
+            if be.Backend.visit(platform):
+                self.backend = be
+                return be
+
+        print('OS not supported')
         return None
+
+    def __str__(self):
+        return '\n'.join(str(mote) for mote in self.motes)
+
 
 # Unified way of accessing motes
 class Mote(object):
@@ -174,7 +202,7 @@ class Mote(object):
         return self.cmp(other) != 0
         
     
-class Motelist(object):
+class MotelistOld(object):
     motes = list()
     lock = threading.Lock()
     updateCallbacks = list()
