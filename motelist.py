@@ -403,7 +403,7 @@ class MotelistOld(object):
         print(Motelist.getClassicFormatMotelist())
 
 
-def arg_parse():
+if __name__ == '__main__':
     parser = argparse.ArgumentParser(add_help=False,
                                      description='Automatically detect and '
                                                  'print out a list of motes '
@@ -420,9 +420,8 @@ def arg_parse():
     parser.add_argument('-h', '--help', action='help',
                            help='Show this message and exit')
 
-    return parser.parse_args()
+    args = parser.parse_args()
 
-
-if __name__ == '__main__':
-    args = arg_parse()
-    print(str(Motelist(omit_header=args.omit_header, csv_out=args.csv ,brief=args.brief)))
+    print(str(Motelist(omit_header=args.omit_header,
+                       csv_out=args.csv,
+                       brief=args.brief)))
