@@ -53,7 +53,7 @@ class Motelist(object):
         try:
             self.__backend.run()
         except AttributeError:
-            pass
+            raise
 
     def create_mote(self):
         return Mote()
