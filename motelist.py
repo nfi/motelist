@@ -55,12 +55,25 @@ class Motelist(object):
         except AttributeError:
             pass
 
+    def create_mote(self):
+        return Mote()
+
     def __str__(self):
         return '\n'.join(str(mote) for mote in self.__motes)
 
 
-# Unified way of accessing motes
 class Mote(object):
+    def __init__(self):
+        self.port = "n/a"
+        self.vid = "n/a"
+        self.pid = "n/a"
+        self.product = "n/a"
+        self.vendor = "n/a"
+        self.serial = "n/a"
+
+
+# Unified way of accessing motes
+class MoteOld(object):
     def __init__(self, mote, manualyAdded = False):
         if mote == None:
             self.__port = None
