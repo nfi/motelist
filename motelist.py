@@ -47,7 +47,7 @@ class Motelist(object):
         self.__omit_header = omit_header
         self.__csv_out = csv_out
         self.__brief = brief
-        self.__motes = ['123']
+        self.__motes = []
         self.__backend = backends.backend.Backend.detect(self)
 
         try:
