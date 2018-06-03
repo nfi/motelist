@@ -35,7 +35,7 @@ import sys
 
 class Backend(object):
     @staticmethod
-    def detect():
+    def detect(motelist):
         backends = (
             'linux',
             'osx',
@@ -49,7 +49,7 @@ class Backend(object):
             be = mod.Backend
 
             if platform.startswith(be.os):
-                return be()
+                return be(motelist)
 
         print('OS not supported')
         return None

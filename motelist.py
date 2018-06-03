@@ -48,10 +48,10 @@ class Motelist(object):
         self.__csv_out = csv_out
         self.__brief = brief
         self.__motes = ['123']
-        self.__backend = backends.backend.Backend.detect()
+        self.__backend = backends.backend.Backend.detect(self)
 
         try:
-            self.__motes.extend(self.__backend.run())
+            self.__backend.run()
         except AttributeError:
             pass
 
