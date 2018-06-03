@@ -43,7 +43,6 @@ class Backend(object):
         backends_dir = 'backends'
 
         platform = sys.platform
-        print(platform)
 
         for backend in backends:
             mod = importlib.import_module('.'.join((backends_dir, backend)))
