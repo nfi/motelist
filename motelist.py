@@ -27,8 +27,8 @@
 #
 # Authors:
 #   Janis Judvaitis
-#   Atis Elsts
-#   George Oikonomou
+#   Atis Elsts <atis.elsts@bristol.ac.uk>
+#   George Oikonomou <g.oikonomou@bristol.ac.uk>
 import os, sys, threading, time, serial
 import backends.backend
 import argparse

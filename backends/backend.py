@@ -28,7 +28,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Authors:
-#   George Oikonomou
+#   George Oikonomou <g.oikonomou@bristol.ac.uk>
 import importlib
 import sys
 
