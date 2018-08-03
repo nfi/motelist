@@ -476,7 +476,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--csv', action='store_true',
                            default=False,
                            help = 'Print list in CSV format')
-    parser.add_argument('-o', '--omit_header', action='store_true',
+    parser.add_argument('-o', '--omit-header', action='store_true',
                            default=False,
                            help='Omit header row')
     parser.add_argument('-b', '--brief', action='store_true',
