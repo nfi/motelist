@@ -32,6 +32,7 @@
 import os, sys, threading, time, serial
 import backends.backend
 import argparse
+import collections
 
 
 class Motelist(object):
@@ -56,10 +57,61 @@ class Motelist(object):
             raise
 
     def create_mote(self):
-        return Mote()
+        mote = Mote()
+        self.__motes.append(mote)
+        return mote
 
     def __str__(self):
-        return '\n'.join(str(mote) for mote in self.__motes)
+        if len(self.__motes) == 0:
+            return "No attached motes found!\n"
+
+        # Map output column headings to class Mote attribute names. Allows
+        # us to easily change column text later, or re-order cols.
+        if self.__brief:
+            cols = collections.OrderedDict([
+                ('Port', 'port'),
+            ])
+        else:
+            cols = collections.OrderedDict([
+                ('Port', 'port'),
+                ('Serial', 'serial'),
+                ('VID', 'vid'),
+                ('PID', 'pid'),
+                ('Product', 'product'),
+                ('Vendor', 'vendor'),
+            ])
+
+        s = ''
+
+        if self.__csv_out:
+            if not self.__omit_header:
+                s += ';'.join(heading for heading in cols.keys()) + '\n'
+
+            for mote in self.__motes:
+                s += ';'.join(getattr(mote, attr)
+                              for attr in cols.values()) + '\n'
+        else:
+            # Prepare table column width
+            lengths = dict(
+                [(heading, len(heading)) for heading in cols.keys()]
+            )
+
+            for mote in self.__motes:
+                for c, a in cols.items():
+                    lengths[c] = max(lengths[c], len(getattr(mote, a)))
+
+            # Create the string format on the fly. Easy way to handle brief out
+            string_fmt = '{}  '.join('' for col in cols.keys()) + '{}\n'
+
+            if not self.__omit_header:
+                s = string_fmt.format(*[c.ljust(lengths[c]) for c in cols.keys()])
+                s += string_fmt.format(*[''.ljust(lengths[c], '-') for c in cols.keys()])
+
+            for mote in self.__motes:
+                s+= string_fmt.format(*[getattr(mote, a).ljust(lengths[c]) for c, a in cols.items()])
+
+        # Remove the trailing newline
+        return s[:-1]
 
 
 class Mote(object):
