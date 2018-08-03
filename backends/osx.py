@@ -81,7 +81,7 @@ class Backend(backends.backend.Backend):
                             child.nextSibling.nextSibling)
                         try:
                             setattr(mote, self.search_attrs[child_text],
-                                    '0x%04x' % (int(val),))
+                                    '0x%04X' % (int(val),))
 
                         except ValueError:
                             setattr(mote, self.search_attrs[child_text], val)
