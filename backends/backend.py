@@ -31,6 +31,7 @@
 #   George Oikonomou <g.oikonomou@bristol.ac.uk>
 import importlib
 import sys
+import os
 
 
 class Backend(object):
@@ -40,7 +41,7 @@ class Backend(object):
             'linux',
             'osx',
         )
-        backends_dir = 'backends'
+        backends_dir = os.path.basename(os.path.dirname(__file__))
 
         platform = sys.platform
 
