@@ -35,8 +35,8 @@ import os
 
 
 class Backend(object):
-    @staticmethod
-    def detect(motelist):
+    @classmethod
+    def detect(cls, motelist):
         backends = (
             'linux',
             'osx',
