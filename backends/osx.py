@@ -52,9 +52,6 @@ class Backend(backends.backend.Backend):
         'USB Serial Number': 'serial'
     }
 
-    def __init__(self, motelist):
-        self.__motelist = motelist
-
     @staticmethod
     def __get_dom_node_text(node):
         """Returns the text inside a DOM node, if one exists. None otherwise"""

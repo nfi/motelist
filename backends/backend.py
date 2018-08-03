@@ -54,3 +54,6 @@ class Backend(object):
 
         print('OS not supported')
         return None
+
+    def __init__(self, motelist):
+        self.__motelist = motelist
