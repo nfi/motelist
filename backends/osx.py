@@ -56,7 +56,7 @@ class Backend(backends.backend.Backend):
         self.__motelist = motelist
 
     @staticmethod
-    def get_dom_node_text(node):
+    def __get_dom_node_text(node):
         """Returns the text inside a DOM node, if one exists. None otherwise"""
         try:
             if node.firstChild.nodeType == dom.Node.TEXT_NODE:
@@ -64,7 +64,7 @@ class Backend(backends.backend.Backend):
         except AttributeError:
             return None
 
-    def dom_node_to_mote(self, port, dom_node):
+    def __dom_node_to_mote(self, port, dom_node):
         mote = self.__motelist.create_mote()
         mote.port = port
         parent = dom_node.parentNode.parentNode.parentNode.parentNode.parentNode
@@ -75,9 +75,9 @@ class Backend(backends.backend.Backend):
         while child is not None:
             if child.nodeType == dom.Node.ELEMENT_NODE:
                 if child.tagName == 'key':
-                    child_text = self.get_dom_node_text(child)
+                    child_text = self.__get_dom_node_text(child)
                     if child_text in self.search_attrs.keys():
-                        val = self.get_dom_node_text(
+                        val = self.__get_dom_node_text(
                             child.nextSibling.nextSibling)
                         try:
                             setattr(mote, self.search_attrs[child_text],
@@ -89,7 +89,7 @@ class Backend(backends.backend.Backend):
             child = child.nextSibling
 
     @classmethod
-    def read_iokit(cls):
+    def __read_iokit(cls):
         ioreg_cmd = '/usr/sbin/ioreg -p IOService -k IODialinDevice -l -r -t -a'
         try:
             outfile = open(cls.tmp_file, 'w')
@@ -121,9 +121,9 @@ class Backend(backends.backend.Backend):
         # This will be the <dict> element that appears when a device gets
         # connected.
         for se in string_elemenets:
-            port = self.get_dom_node_text(se)
+            port = self.__get_dom_node_text(se)
             if port in ports:
-                self.dom_node_to_mote(port, se)
+                self.__dom_node_to_mote(port, se)
                 ports.remove(port)
 
             # Stop searching if we have found a match for all identified ports
