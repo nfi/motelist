@@ -53,7 +53,7 @@ class Backend(object):
                 return be(motelist)
 
         print('OS not supported')
-        return None
+        sys.exit(1)
 
     def __init__(self, motelist):
         self.motelist = motelist
