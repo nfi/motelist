@@ -100,7 +100,7 @@ class Backend(backends.backend.Backend):
         ports = []
 
         for p in self.port_patterns:
-            ports.extend(glob.glob(p))
+            ports.extend(sorted(glob.glob(p)))
 
         if len(ports) == 0:
             return None
