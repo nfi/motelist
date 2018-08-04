@@ -140,9 +140,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    try:
-        print(str(Motelist(omit_header=args.omit_header,
-                           csv_out=args.csv,
-                           brief=args.brief)))
-    except AttributeError:
-        pass
+    print(str(Motelist(omit_header=args.omit_header,
+                       csv_out=args.csv,
+                       brief=args.brief)))
