@@ -33,6 +33,7 @@ import sys
 import backends.backend
 import argparse
 import collections
+import subprocess
 
 
 class Motelist(object):
@@ -41,6 +42,8 @@ class Motelist(object):
         'csv_out': False,
         'brief': False,
     }
+
+    version_string = '0.1-beta'
 
     def __init__(self, omit_header=defaults['omit_header'],
                  csv_out=defaults['csv_out'],
@@ -124,6 +127,17 @@ class Mote(object):
         self.serial = "n/a"
 
 
+def print_version():
+    git_describe_cmd = ['git', 'describe', '--tags', '--always']
+    try:
+        # In 2.7 check_output returns string, in 3+ it returns bytes.
+        # This should be portable.
+        version = subprocess.check_output(git_describe_cmd).decode('utf-8')
+    except (IOError, OSError, subprocess.CalledProcessError):
+        version = Motelist.version_string
+    return version
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(add_help=False,
                                      description='Automatically detect and '
@@ -140,6 +154,9 @@ if __name__ == '__main__':
                         help='Only print serial port paths')
     parser.add_argument('-h', '--help', action='help',
                         help='Show this message and exit')
+    parser.add_argument('-v', '--version', action='version',
+                        version='%(prog)s ' + print_version(),
+                        help='Prints software version')
 
     args = parser.parse_args()
 
