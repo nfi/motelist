@@ -107,7 +107,7 @@ class OSXBackend(backends.backend.Backend):
 
         # Invoke ioreg. This will give us an XML file of connected devices of a
         # specific class. We will then extract information from that XML file.
-        doc = self.read_iokit()
+        doc = self.__read_iokit()
 
         # Retrieve all XML <string>. One of them will contain the device port
         string_elemenets = doc.getElementsByTagName('string')
