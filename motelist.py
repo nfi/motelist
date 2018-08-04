@@ -130,13 +130,13 @@ if __name__ == '__main__':
                                                  'print out a list of motes '
                                                  'connected to this computer')
     parser.add_argument('-c', '--csv', action='store_true',
-                           default=False,
+                           default=Motelist.defaults['csv_out'],
                            help = 'Print list in CSV format')
     parser.add_argument('-o', '--omit-header', action='store_true',
-                           default=False,
+                           default=Motelist.defaults['omit_header'],
                            help='Omit header row')
     parser.add_argument('-b', '--brief', action='store_true',
-                           default=False,
+                           default=Motelist.defaults['brief'],
                            help='Only print serial port paths')
     parser.add_argument('-h', '--help', action='help',
                            help='Show this message and exit')
