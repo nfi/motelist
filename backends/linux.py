@@ -43,8 +43,6 @@ class Device(object):
 
     @classmethod
     def detect(cls, port, motelist, sys_usb):
-        base = os.path.basename(port)
-
         mote = motelist.create_mote()
         mote.port = port
 
@@ -75,6 +73,7 @@ class USBSerialDevice(object):
         if os.path.exists(sys_dev_path):
             sys_usb = os.path.dirname(
                 os.path.dirname(os.path.realpath(sys_dev_path)))
+            Device.detect(port, motelist, sys_usb)
 
 
 class CDCACMDevice(object):
@@ -86,24 +85,24 @@ class CDCACMDevice(object):
 
         if os.path.exists(sys_dev_path):
             sys_usb = os.path.dirname(os.path.realpath(sys_dev_path))
+            Device.detect(port, motelist, sys_usb)
 
 
 class LinuxBackend(backends.backend.Backend):
     os = 'linux'
 
-    port_patterns = [
-        '/dev/ttyUSB*',
-        '/dev/ttyACM*',
-    ]
+    port_patterns = {
+        '/dev/ttyUSB': USBSerialDevice,
+        '/dev/ttyACM': CDCACMDevice,
+    }
 
     def run(self):
         ports = []
 
         for p in self.port_patterns:
-            ports.extend(sorted(glob.glob(p)))
+            ports.extend(sorted(glob.glob(p + '*')))
 
         for port in ports:
-            USBSerialDevice.visit(port, self.__motelist)
-            CDCACMDevice.visit(port, self.__motelist)
-
-
+            for pattern, device_class in self.port_patterns.items():
+                if port.startswith(pattern):
+                    device_class().visit(port, self.motelist)
