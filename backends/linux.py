@@ -32,7 +32,7 @@ import glob
 import backends.backend
 
 
-class Device(object):
+class LinuxDevice(object):
     attr_file_map = {
         'vid': 'idVendor',
         'pid': 'idProduct',
@@ -41,13 +41,18 @@ class Device(object):
         'serial': 'serial'
     }
 
-    @classmethod
-    def detect(cls, port, motelist, sys_usb):
-        mote = motelist.create_mote()
-        mote.port = port
+    def __init__(self, port, motelist):
+        self.__port = port
+        self.__base = os.path.basename(port)
+        self.__motelist = motelist
+        self.__sys_path = self.find_sys_path(self.__base)
 
-        for attr, file in cls.attr_file_map.items():
-            value = cls.__read_line(os.path.join(sys_usb, file))
+    def create(self):
+        mote = self.__motelist.create_mote()
+        mote.port = self.__port
+
+        for attr, file in self.attr_file_map.items():
+            value = self.__read_line(os.path.join(self.__sys_path, file))
             try:
                 setattr(mote, attr, '0x%04X' % (int(value, 16),))
             except ValueError:
@@ -63,29 +68,18 @@ class Device(object):
             return line
 
 
-class USBSerialDevice(object):
+class USBSerialDevice(LinuxDevice):
     @staticmethod
-    def visit(port, motelist):
-        base = os.path.basename(port)
-
+    def find_sys_path(base):
         sys_dev_path = '/sys/class/tty/{}/device/driver/{}'.format(base, base)
-
-        if os.path.exists(sys_dev_path):
-            sys_usb = os.path.dirname(
-                os.path.dirname(os.path.realpath(sys_dev_path)))
-            Device.detect(port, motelist, sys_usb)
+        return os.path.dirname(os.path.dirname(os.path.realpath(sys_dev_path)))
 
 
-class CDCACMDevice(object):
+class CDCACMDevice(LinuxDevice):
     @staticmethod
-    def visit(port, motelist):
-        base = os.path.basename(port)
-
-        sys_dev_path = '/sys/class/tty/{}/device'.format(base, )
-
-        if os.path.exists(sys_dev_path):
-            sys_usb = os.path.dirname(os.path.realpath(sys_dev_path))
-            Device.detect(port, motelist, sys_usb)
+    def find_sys_path(base):
+        sys_dev_path = '/sys/class/tty/{}/device'.format(base)
+        return os.path.dirname(os.path.realpath(sys_dev_path))
 
 
 class LinuxBackend(backends.backend.Backend):
@@ -105,4 +99,4 @@ class LinuxBackend(backends.backend.Backend):
         for port in ports:
             for pattern, device_class in self.port_patterns.items():
                 if port.startswith(pattern):
-                    device_class().visit(port, self.motelist)
+                    device_class(port, self.motelist).create()
