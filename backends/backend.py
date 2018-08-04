@@ -56,4 +56,4 @@ class Backend(object):
         return None
 
     def __init__(self, motelist):
-        self.__motelist = motelist
+        self.motelist = motelist

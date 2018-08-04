@@ -62,7 +62,7 @@ class OSXBackend(backends.backend.Backend):
             return None
 
     def __dom_node_to_mote(self, port, dom_node):
-        mote = self.__motelist.create_mote()
+        mote = self.motelist.create_mote()
         mote.port = port
         parent = dom_node.parentNode.parentNode.parentNode.parentNode.parentNode
 
