@@ -29,7 +29,7 @@
 #   Janis Judvaitis
 #   Atis Elsts <atis.elsts@bristol.ac.uk>
 #   George Oikonomou <g.oikonomou@bristol.ac.uk>
-import os, sys, threading, time, serial
+import sys
 import backends.backend
 import argparse
 import collections
