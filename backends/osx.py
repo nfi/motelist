@@ -35,7 +35,7 @@ import xml.dom.minidom as dom
 import backends.backend
 
 
-class Backend(backends.backend.Backend):
+class OSXBackend(backends.backend.Backend):
     os = 'darwin'
     tmp_file = '/tmp/get-ports-osx.xml'
 

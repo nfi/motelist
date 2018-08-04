@@ -37,17 +37,17 @@ import os
 class Backend(object):
     @classmethod
     def detect(cls, motelist):
-        backends = (
-            'linux',
-            'osx',
-        )
+        backends = {
+            'linux': 'LinuxBackend',
+            'osx': 'OSXBackend',
+        }
         backends_dir = os.path.basename(os.path.dirname(__file__))
 
         platform = sys.platform
 
-        for backend in backends:
-            mod = importlib.import_module('.'.join((backends_dir, backend)))
-            be = mod.Backend
+        for osb, backend in backends.items():
+            mod = importlib.import_module('.'.join((backends_dir, osb)))
+            be = getattr(mod, backend)
 
             if platform.startswith(be.os):
                 return be(motelist)
