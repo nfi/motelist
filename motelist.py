@@ -34,20 +34,28 @@ import backends.backend
 import argparse
 import collections
 import subprocess
-
+import re
 
 class Motelist(object):
     defaults = {
         'omit_header': False,
         'csv_out': False,
         'brief': False,
+        'vid': None,
+        'pid': None,
+        'serial': None,
+        'product': None
     }
 
     version_string = '0.1-beta'
 
     def __init__(self, omit_header=defaults['omit_header'],
                  csv_out=defaults['csv_out'],
-                 brief=defaults['brief']):
+                 brief=defaults['brief'],
+                 vid=defaults['vid'],
+                 pid=defaults['pid'],
+                 serial=defaults['serial'],
+                 product=defaults['product']):
         self.__omit_header = omit_header
         self.__csv_out = csv_out
         self.__brief = brief
@@ -58,6 +66,40 @@ class Motelist(object):
             self.__backend.run()
         except AttributeError:
             raise
+
+        if vid is not None:
+            self.__motes = self._filter_numeric('vid', vid, self.__motes)
+
+        if pid is not None:
+            self.__motes = self._filter_numeric('pid', pid, self.__motes)
+
+        if serial is not None:
+            self.__motes = self._filter_regex('serial', serial, self.__motes)
+
+        if product is not None:
+            self.__motes = self._filter_regex('product', product, self.__motes)
+
+    def _filter_numeric(self, name, value, motes):
+        value = self._decodevalue(value)
+        return list(filter(lambda m: self._decodevalue(getattr(m, name, '0')) == value, motes))
+
+    def _filter_regex(self, name, value, motes):
+        pa = re.compile(value)
+        return list(filter(lambda m: pa.match(getattr(m, name, '')), motes))
+
+    def _decodevalue(self, x):
+        x = x.strip()
+        if x.startswith("0x"):
+            return int(x[2:], 16)
+        if x.startswith("#") or x.startswith("$"):
+            return int(x[1:], 16)
+        if x.startswith("0b"):
+            return int(x[2:], 2)
+        if x.startswith("0o"):
+            return int(x[2:], 8)
+        if x.startswith("0") and len(x) > 1:
+            return int(x[1:], 8)
+        return int(x)
 
     def create_mote(self):
         mote = Mote()
@@ -137,7 +179,6 @@ def print_version():
         version = Motelist.version_string
     return version
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(add_help=False,
                                      description='Automatically detect and '
@@ -152,6 +193,18 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--brief', action='store_true',
                         default=Motelist.defaults['brief'],
                         help='Only print serial port paths')
+    parser.add_argument('--vid', dest='vid',
+                        default=Motelist.defaults['vid'],
+                        help='Only print devices with this VID')
+    parser.add_argument('--pid', dest='pid',
+                        default=Motelist.defaults['pid'],
+                        help='Only print devices with this PID')
+    parser.add_argument('--serial', dest='serial',
+                        default=Motelist.defaults['serial'],
+                        help='Only print devices matching this serial')
+    parser.add_argument('--product', dest='product',
+                        default=Motelist.defaults['product'],
+                        help='Only print devices matching this product')
     parser.add_argument('-h', '--help', action='help',
                         help='Show this message and exit')
     parser.add_argument('-v', '--version', action='version',
@@ -162,4 +215,8 @@ if __name__ == '__main__':
 
     print(str(Motelist(omit_header=args.omit_header,
                        csv_out=args.csv,
-                       brief=args.brief)))
+                       brief=args.brief,
+                       vid=args.vid,
+                       pid=args.pid,
+                       serial=args.serial,
+                       product=args.product)))
