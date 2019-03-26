@@ -41,6 +41,7 @@ class OSXBackend(backends.backend.Backend):
 
     port_patterns = [
         '/dev/tty.SLAB*',
+        '/dev/tty.usbserial-*',
         '/dev/tty.usbmodem*',
     ]
 
@@ -61,13 +62,7 @@ class OSXBackend(backends.backend.Backend):
         except AttributeError:
             return None
 
-    def __dom_node_to_mote(self, port, dom_node):
-        mote = self.motelist.create_mote()
-        mote.port = port
-        parent = dom_node.parentNode.parentNode.parentNode.parentNode.parentNode
-
-        # For a given DOM node, search all its children using depth=1. Collect
-        # relevant info and populate the respective Mote object.
+    def __dom_node_to_mote_search(self, mote, parent):
         child = parent.firstChild
         while child is not None:
             if child.nodeType == dom.Node.ELEMENT_NODE:
@@ -79,11 +74,20 @@ class OSXBackend(backends.backend.Backend):
                         try:
                             setattr(mote, self.search_attrs[child_text],
                                     '0x%04X' % (int(val),))
-
                         except ValueError:
                             setattr(mote, self.search_attrs[child_text], val)
 
             child = child.nextSibling
+
+    def __dom_node_to_mote(self, port, dom_node):
+        mote = self.motelist.create_mote()
+        mote.port = port
+        parent = dom_node.parentNode.parentNode.parentNode.parentNode
+
+        # For a given DOM node, search all its children using depth=2. Collect
+        # relevant info and populate the respective Mote object.
+        self.__dom_node_to_mote_search(mote, parent)
+        self.__dom_node_to_mote_search(mote, parent.parentNode)
 
     @classmethod
     def __read_iokit(cls):
