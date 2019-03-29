@@ -66,7 +66,10 @@ class Motelist(object):
 
     def __str__(self):
         if len(self.__motes) == 0:
-            return 'No motes detected'
+            if self.__brief:
+                return ' '
+            else:
+                return 'No motes detected'
 
         # Map output column headings to class Mote attribute names. Allows
         # us to easily change column text later, or re-order cols.
