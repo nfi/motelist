@@ -29,6 +29,7 @@
 #
 # Authors:
 #   George Oikonomou <g.oikonomou@bristol.ac.uk>
+import platform
 import glob
 import subprocess
 import xml.dom.minidom as dom
@@ -63,11 +64,19 @@ class OSXBackend(backends.backend.Backend):
             return None
 
     def __dom_node_to_mote(self, port, dom_node):
+        """Create an object of class Mote and try to populate it from a DOM node"""
+        macos_ver = '.'.join(platform.mac_ver()[0].split(".")[0:2])
         mote = self.motelist.create_mote()
         mote.port = port
-        parent = dom_node.parentNode.parentNode.parentNode.parentNode.parentNode
+        
+        # Go up the DOM by a number of levels dependent on the macOS version. This will
+        # This will be the <dict> element that appears when a device gets connected.
+        if macos_ver == '10.15':
+            parent = dom_node.parentNode.parentNode.parentNode
+        else:
+            parent = dom_node.parentNode.parentNode.parentNode.parentNode.parentNode
 
-        # For a given DOM node, search all its children using depth=1. Collect
+        # For this DOM <dict>, search all children using depth=1. Collect
         # relevant info and populate the respective Mote object.
         child = parent.firstChild
         while child is not None:
