@@ -44,7 +44,7 @@ class Motelist(object):
         'brief': False,
     }
 
-    version_string = '0.1-beta'
+    version_string = '0.2'
 
     def __init__(self, omit_header=defaults['omit_header'],
                  csv_out=defaults['csv_out'],
