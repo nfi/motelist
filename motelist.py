@@ -30,6 +30,7 @@
 #   Atis Elsts <atis.elsts@bristol.ac.uk>
 #   George Oikonomou <g.oikonomou@bristol.ac.uk>
 import sys
+import os
 import backends.backend
 import argparse
 import collections
@@ -131,11 +132,13 @@ class Mote(object):
 
 
 def print_version():
-    git_describe_cmd = ['git', 'describe', '--tags', '--always']
+    git_describe_cmd = ['git', '-C', os.path.dirname(os.path.abspath(__file__)), 'describe', '--tags', '--always']
     try:
-        # In 2.7 check_output returns string, in 3+ it returns bytes.
-        # This should be portable.
-        version = subprocess.check_output(git_describe_cmd).decode('utf-8')
+        # Suppress git stderr - portable across 2.7 and 3+
+        with open(os.devnull, 'w') as devnull:
+            # In 2.7 check_output returns string, in 3+ it returns bytes.
+            # This should be portable.
+            version = subprocess.check_output(git_describe_cmd, stderr=devnull).decode('utf-8')
     except (IOError, OSError, subprocess.CalledProcessError):
         version = Motelist.version_string
     return version
