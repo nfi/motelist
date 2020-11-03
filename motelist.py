@@ -45,7 +45,7 @@ class Motelist(object):
         'patterns': [],
     }
 
-    version_string = '0.2'
+    version_string = '0.3'
 
     def __init__(self, omit_header=defaults['omit_header'],
                  csv_out=defaults['csv_out'],
