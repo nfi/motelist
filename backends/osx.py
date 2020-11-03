@@ -43,7 +43,6 @@ class OSXBackend(backends.backend.Backend):
     port_patterns = [
         '/dev/tty.SLAB*',
         '/dev/tty.usbmodem*',
-        '/dev/tty.usbserial*',
     ]
 
     search_attrs = {
@@ -68,17 +67,37 @@ class OSXBackend(backends.backend.Backend):
         macos_ver = '.'.join(platform.mac_ver()[0].split(".")[0:2])
         mote = self.motelist.create_mote()
         mote.port = port
-        
+
         # Go up the DOM by a number of levels dependent on the macOS version. This will
         # This will be the <dict> element that appears when a device gets connected.
         if macos_ver == '10.15':
-            parent = dom_node.parentNode.parentNode.parentNode
+            parent = dom_node.parentNode
+
+            # We cannot predetermine the level of nesting, so we need to keep going up
+            # the DOM until we find the correct level. Unfortunately, we can only do this
+            # heuristically. We keep going up until we encounter a DOM <dict> that has a
+            # "USB Vendor Name"
+            valid = False
+            while not valid:
+                parent = parent.parentNode
+
+                if not parent:
+                    break
+
+                child = parent.firstChild
+                while child is not None:
+                    if child.nodeType == dom.Node.ELEMENT_NODE:
+                        if child.tagName == 'key':
+                            child_text = self.__get_dom_node_text(child)
+                            if child_text == 'USB Vendor Name':
+                                valid = True
+                    child = child.nextSibling
         else:
             parent = dom_node.parentNode.parentNode.parentNode.parentNode.parentNode
 
         # For this DOM <dict>, search all children using depth=1. Collect
         # relevant info and populate the respective Mote object.
-        child = parent.firstChild
+        child = parent.firstChild if parent else None
         while child is not None:
             if child.nodeType == dom.Node.ELEMENT_NODE:
                 if child.tagName == 'key':
