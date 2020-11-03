@@ -67,7 +67,7 @@ class OSXBackend(backends.backend.Backend):
         macos_ver = '.'.join(platform.mac_ver()[0].split(".")[0:2])
         mote = self.motelist.create_mote()
         mote.port = port
-        
+
         # Go up the DOM by a number of levels dependent on the macOS version. This will
         # This will be the <dict> element that appears when a device gets connected.
         if macos_ver == '10.15':
@@ -80,6 +80,10 @@ class OSXBackend(backends.backend.Backend):
             valid = False
             while not valid:
                 parent = parent.parentNode
+
+                if not parent:
+                    break
+
                 child = parent.firstChild
                 while child is not None:
                     if child.nodeType == dom.Node.ELEMENT_NODE:
@@ -93,7 +97,7 @@ class OSXBackend(backends.backend.Backend):
 
         # For this DOM <dict>, search all children using depth=1. Collect
         # relevant info and populate the respective Mote object.
-        child = parent.firstChild
+        child = parent.firstChild if parent else None
         while child is not None:
             if child.nodeType == dom.Node.ELEMENT_NODE:
                 if child.tagName == 'key':
