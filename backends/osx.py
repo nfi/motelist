@@ -72,7 +72,23 @@ class OSXBackend(backends.backend.Backend):
         # Go up the DOM by a number of levels dependent on the macOS version. This will
         # This will be the <dict> element that appears when a device gets connected.
         if macos_ver == '10.15':
-            parent = dom_node.parentNode.parentNode.parentNode
+            parent = dom_node.parentNode
+
+            # We cannot predetermine the level of nesting, so we need to keep going up
+            # the DOM until we find the correct level. Unfortunately, we can only do this
+            # heuristically. We keep going up until we encounter a DOM <dict> that has a
+            # "USB Vendor Name"
+            valid = False
+            while not valid:
+                parent = parent.parentNode
+                child = parent.firstChild
+                while child is not None:
+                    if child.nodeType == dom.Node.ELEMENT_NODE:
+                        if child.tagName == 'key':
+                            child_text = self.__get_dom_node_text(child)
+                            if child_text == 'USB Vendor Name':
+                                valid = True
+                    child = child.nextSibling
         else:
             parent = dom_node.parentNode.parentNode.parentNode.parentNode.parentNode
 
