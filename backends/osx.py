@@ -64,13 +64,13 @@ class OSXBackend(backends.backend.Backend):
 
     def __dom_node_to_mote(self, port, dom_node):
         """Create an object of class Mote and try to populate it from a DOM node"""
-        macos_ver = '.'.join(platform.mac_ver()[0].split(".")[0:2])
+        macos_ver = platform.mac_ver()[0].split(".")[0:2]
         mote = self.motelist.create_mote()
         mote.port = port
 
         # Go up the DOM by a number of levels dependent on the macOS version. This will
         # This will be the <dict> element that appears when a device gets connected.
-        if macos_ver == '10.15':
+        if macos_ver[0] > 10 or (macos_ver[0] == 10 and macos_ver[1] >= 15):
             parent = dom_node.parentNode
 
             # We cannot predetermine the level of nesting, so we need to keep going up
