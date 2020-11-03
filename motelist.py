@@ -42,13 +42,15 @@ class Motelist(object):
         'omit_header': False,
         'csv_out': False,
         'brief': False,
+        'patterns': [],
     }
 
     version_string = '0.2'
 
     def __init__(self, omit_header=defaults['omit_header'],
                  csv_out=defaults['csv_out'],
-                 brief=defaults['brief']):
+                 brief=defaults['brief'],
+                 patterns=defaults['patterns']):
         self.__omit_header = omit_header
         self.__csv_out = csv_out
         self.__brief = brief
@@ -56,7 +58,7 @@ class Motelist(object):
         self.__backend = backends.backend.Backend.detect(self)
 
         try:
-            self.__backend.run()
+            self.__backend.run(patterns)
         except AttributeError:
             raise
 
@@ -158,6 +160,10 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--brief', action='store_true',
                         default=Motelist.defaults['brief'],
                         help='Only print serial port paths')
+    parser.add_argument('-p', '--patterns', nargs="+",
+                        default=Motelist.defaults['patterns'],
+                        help='Search for additional port filename patterns, for example '
+                             'you can pass -p "/dev/tty.usbserial*"')
     parser.add_argument('-h', '--help', action='help',
                         help='Show this message and exit')
     parser.add_argument('-v', '--version', action='version',
@@ -168,7 +174,8 @@ if __name__ == '__main__':
 
     output = str(Motelist(omit_header=args.omit_header,
                           csv_out=args.csv,
-                          brief=args.brief))
+                          brief=args.brief,
+                          patterns=args.patterns))
 
     if output:
         print(output)

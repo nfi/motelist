@@ -125,8 +125,9 @@ class OSXBackend(backends.backend.Backend):
         except IOError:
             raise
 
-    def run(self):
+    def run(self, patterns):
         ports = []
+        self.port_patterns += patterns
 
         for p in self.port_patterns:
             ports.extend(sorted(glob.glob(p)))
