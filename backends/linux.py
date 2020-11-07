@@ -90,9 +90,9 @@ class LinuxBackend(backends.backend.Backend):
         '/dev/ttyACM': CDCACMDevice,
     }
 
-    def run(self, patterns)):
+    def run(self, patterns):
         ports = []
-        self.port_patterns += patterns
+        self.port_patterns.update(patterns)
 
         for p in self.port_patterns:
             ports.extend(sorted(glob.glob(p + '*')))
